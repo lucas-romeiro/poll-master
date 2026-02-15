@@ -1,0 +1,54 @@
+services:
+  app:
+    container_name: pollmaster
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '${PORT}:3000'
+    volumes:
+      - .:/src
+      - pollmaster-modules:/src/node_modules
+    environment:
+      - PORT=${PORT}
+      - PG_HOST=${PG_HOST}
+      - PG_PORT=${PG_PORT}
+      - PG_USER=${PG_USER}
+      - PG_PASSWORD=${PG_PASSWORD}
+      - PG_DATABASE=${PG_DATABASE}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - pollmaster-network
+    command: npm run start
+
+  db:
+    image: postgres:alpine
+    container_name: pollmaster-database
+    ports:
+      - '${PG_PORT}:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DATABASE}
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d tasks']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - pollmaster-network
+
+networks:
+  pollmaster-network:
+    driver: bridge
+
+volumes:
+  pollmaster-modules:
+  postgres_data:
+    driver: local
+  redis-data:
