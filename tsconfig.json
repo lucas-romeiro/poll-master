@@ -7,8 +7,11 @@
     "rootDir": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "esModuleInterop": true,
+    "strict": true,
+    "target": "es2023"
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "test/**/*.ts", "prisma.config.ts"],
   "exclude": ["dist", "node_modules"]
 }
