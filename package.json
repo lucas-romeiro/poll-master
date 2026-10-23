@@ -7,7 +7,7 @@
     "dev": "tsx --watch --env-file .env.development src/main.ts",
     "dev:staging": "tsx --watch --env-file .env.staging src/main.ts",
     "dev:prod": "tsx --watch --env-file .env.production src/main.ts",
-    "start": "node --env-file .env dist/index.js",
+    "start": "node --env-file .env dist/main.js",
     "type-check": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
@@ -18,7 +18,13 @@
     "test:run": "vitest --run",
     "test:ui": "vitest --ui",
     "coverage": "vitest run --coverage",
-    "prepare": "husky"
+    "prepare": "husky",
+    "postinstall": "prisma generate",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:reset": "prisma migrate reset",
+    "db:studio": "prisma studio"
   },
   "keywords": [],
   "author": "Lucas Romeiro",
