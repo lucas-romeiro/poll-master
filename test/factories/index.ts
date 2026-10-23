@@ -8,3 +8,4 @@ export {
   pollInput,
   PollInputBody,
 } from './poll-input.factory';
+export { finishedPeriod, openPeriod, seedPoll } from './seed-poll.factory';
