@@ -1,12 +1,23 @@
-import express from 'express';
+import { InMemoryPollEvents } from './infrastructure/database/events';
+import { prisma, PrismaPollRepository } from './infrastructure/database/prisma';
+import { createApp } from './interface/http';
 
-const app = express();
-const port = process.env.PORT ?? '9001';
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
+const app = createApp({
+  events: new InMemoryPollEvents(),
+  polls: new PrismaPollRepository(prisma),
 });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+const port = Number(process.env.PORT ?? 3000);
+const server = app.listen(port, () => {
+  console.log(`Poll Master rodando em http://localhost:${String(port)}`);
 });
+
+async function shutdown() {
+  server.closeAllConnections();
+  server.close();
+  await prisma.$disconnect();
+  process.exit(0);
+}
+
+process.on('SIGINT', () => void shutdown());
+process.on('SIGTERM', () => void shutdown());
